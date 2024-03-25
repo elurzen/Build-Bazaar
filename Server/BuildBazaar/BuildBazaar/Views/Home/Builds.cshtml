@@ -1,0 +1,102 @@
+
+@{
+    ViewBag.Title = "Builds";
+}
+
+<!DOCTYPE html>
+<head>
+    <link rel="stylesheet" type="text/css" href="~/Content/BuildBazaar.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/Scripts/buildbazaar-builds.js"></script>
+    @*<script src="https://www.pathofexile.com/passive-skill-tree"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/canvasjs/1.7.0/canvasjs.min.js"></script>*@
+</head>
+<body>
+
+    <div id="sidebar">
+        <h2>Builds</h2>
+        <ul style="list-style-type:none;"></ul>
+    </div>
+
+    <div id="content">
+        <div class="overlay"></div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div id="build-info">
+                    <h2>Build Info</h2>
+                    <p id="notes">Here's some text with <a href="#">a clickable link</a>.</p>
+                    <div id="edit-buttons">
+                        <button id="edit-button">Edit</button>
+                        <button id="cancel-button" style="display: none;">Cancel</button>
+                        <button id="save-button" style="display: none;">Save</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4 noscroll">
+                <iframe id="tree" src="https://poeplanner.com/" style="width:100%; height: 100%;"></iframe>
+            </div>
+            <div class="col-sm-4">
+                <div id="referenceImages">
+                    <button id="upload-image-button" onclick="showUploadReferenceImageForm()">Upload Image</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay"></div>
+
+    <div id="addBuildForm">
+        <div id="add-build-form" class="popup">
+            <div class="popup-content">
+                <h2>Create new build</h2>
+                <form id="new-build-form" method="post">
+                    <label for="build-name">Build name:</label>
+                    <input type="text" id="build-name" name="build-name" required>
+
+                    <label for="build-image">Build image:</label>
+                    <input type="file" id="build-image" name="build-image" accept="image/*" required>
+
+                    <div class="buttons">
+                        <button type="button" onclick="hideAddBuildForm()">Cancel</button>
+                        <button type="submit" id="create-build-button">Create</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="uploadReferenceImageForm">
+        <div id="upload-reference-image-form" class="popup">
+            <div class="popup-content">
+                <h2>Upload Image</h2>
+                <form id="upload-reference-image-form" method="post">
+                    <label for="reference-image">Image:</label>
+                    <input type="file" id="reference-image" name="reference-image" accept="image/*" required>
+
+                    <div class="buttons">
+                        <button type="button" onclick="hideUploadReferenceImageForm()">Cancel</button>
+                        <button type="submit" id="upload-reference-image-button">Upload</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+
+
+@*<div id="skill-tree">
+        <canvas id="skill-tree-canvas" width="1200" height="800"></canvas>
+
+        <script>
+            $.getJSON("https://www.pathofexile.com/passive-skill-tree", function (data) {
+                const skillTree = new SkillTree();
+                skillTree.loadFromPoESkillTreeData(data);
+
+                const canvas = document.getElementById("skill-tree-canvas");
+                const ctx = canvas.getContext("2d");
+                skillTree.draw(ctx);
+            });
+        </script>
+    </div>*@
