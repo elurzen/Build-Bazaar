@@ -24,6 +24,8 @@ function validateUserToken() {
                         populateNote();
                         populateReferenceImages()
                         initNotesButtons();
+                        populateBuildUrls();
+                        initUrlButtons();
                     }
 
                 } else {
@@ -79,11 +81,13 @@ function initBuildForm() {
 }
 
 function showAddBuildForm() {
-    document.getElementById("add-build-form").style.display = "block";
+    //document.getElementById("add-build-form").style.display = "block";
+    $("#add-build-form").show();
 }
 
 function hideAddBuildForm() {
-    document.getElementById("add-build-form").style.display = "none"
+    //document.getElementById("add-build-form").style.display = "none"
+    $("#add-build-form").hide();
 }
 
 function initUploadReferenceImageForm() {
@@ -125,11 +129,13 @@ function initUploadReferenceImageForm() {
 }
 
 function showUploadReferenceImageForm() {
-    document.getElementById("upload-reference-image-form").style.display = "block";
+    //document.getElementById("upload-reference-image-form").style.display = "block";
+    $("#upload-reference-image-form").show();
 }
 
 function hideUploadReferenceImageForm() {
-    document.getElementById("upload-reference-image-form").style.display = "none"
+    //document.getElementById("upload-reference-image-form").style.display = "none"
+    $("#upload-reference-image-form").hide();
 }
 
 function populateBuilds() {
@@ -143,7 +149,7 @@ function populateBuilds() {
         },
         success: function (result) {
             // Get the list container element
-            var list = $('#sidebar');
+            var list = $('#sidebarBuildList');
 
             // Clear the list 
             //list.empty();
@@ -163,6 +169,7 @@ function populateBuilds() {
                     ///alert("clicked buildID: " + buildID);
                     populateNote();
                     populateReferenceImages();
+                    populateBuildUrls();
                 });
                 //var splits = record.imageName.split('.');
                 //var extension = splits[splits.length - 1];
@@ -170,8 +177,6 @@ function populateBuilds() {
                 var imagePath = record.filePath;
                 // Create an <img> element for the image
                 var img = $('<img>').attr('src', imagePath).addClass('thumbnail');
-
-
 
                 // Create a <h3> element for the build name
                 var h4 = $('<h4>').text(record.buildName);
@@ -212,10 +217,57 @@ function populateNote() {
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState === 4 && xhr.status === 200) {
                         var fileContents = xhr.responseText;
-                        document.getElementById("notes").textContent = fileContents;
+                        document.getElementById("notes").innerText = fileContents;
                     }
                 };
                 xhr.send();
+            },
+            error: function (xhr, status, error) {
+                // ajax error, show error message
+                //$('#login-error').text('An error occurred while logging in.');
+                alert("Error: " + error);
+            }
+        });
+    }
+}
+
+function populateBuildUrls() {
+    var userToken = localStorage.getItem("token");
+    if (localStorage.buildID != null) {
+        $.ajax({
+            type: 'POST',
+            url: '/Home/GetBuildUrls',
+            headers: {
+                Authorization: userToken
+            },
+            data: { buildID: localStorage.buildID },
+            success: function (result) {
+                var urlSelect = $('#urlSelect');
+                urlSelect.empty(); // Clear any existing options
+
+                // Add the "Create New" option at the top
+                var createNewOption = $('<option>')
+                    .val(-1)
+                    .text('Create New')
+                    .data({
+                        'url': '',
+                        'name': '',
+                        'id': null
+                    });
+                urlSelect.append(createNewOption);
+
+                // Iterate through the retrieved Build URLs and add them as options
+                result.buildUrls.forEach(function (buildUrl) {
+                    var option = $('<option>')
+                        .val(buildUrl.buildUrlID)
+                        .text(buildUrl.buildUrlName)
+                        .data({
+                            'url': buildUrl.buildUrl,
+                            'name': buildUrl.buildUrlName,
+                            'id': buildUrl.buildUrlID
+                        });
+                    urlSelect.append(option);
+                });
             },
             error: function (xhr, status, error) {
                 // ajax error, show error message
@@ -239,7 +291,7 @@ function populateReferenceImages() {
         data: {buildID: localStorage.buildID},
         success: function (result) {
             // Get the list container element
-            var list = $('#referenceImages');
+            var list = $('#referenceImageList');
             list.empty();
 
             // Iterate through the rows returned by the database
@@ -270,15 +322,14 @@ function populateReferenceImages() {
     });
 }
 
-
 function initNotesButtons() {
 
     // Get the buttons and build info section
-    var editButton = $('#edit-button');
-    var cancelButton = $('#cancel-button');
-    var saveButton = $('#save-button');
-    var uploadButton = $('#upload-image-button');
-    var buildInfo = $('#build-info');
+    var editButton = $('#notes-edit-button');
+    var cancelButton = $('#notes-cancel-button');
+    var saveButton = $('#notes-save-button');
+    //var uploadButton = $('#upload-image-button');
+    //var buildInfo = $('#build-info');
     var notes = $('#notes');
     var noteContent;
 
@@ -289,7 +340,7 @@ function initNotesButtons() {
         cancelButton.show();
         saveButton.show();
 
-        noteContent = notes.text();
+        noteContent = notes.innerText;
         // Enable editing of the notes section
         notes.attr('contenteditable', 'true');
         notes.focus();
@@ -304,7 +355,7 @@ function initNotesButtons() {
 
         // Disable editing of the notes section and reset its content
         notes.attr('contenteditable', 'false');
-        notes.text(noteContent);
+        notes.innerText = noteContent;
     });
 
     // Save button click event
@@ -314,7 +365,7 @@ function initNotesButtons() {
         if (userToken == null) {
             window.location.href = "/";
         }
-        if (userToken != null) {
+        else {
 
             $.ajax({
                 type: 'POST',
@@ -322,7 +373,10 @@ function initNotesButtons() {
                 headers: {
                     Authorization: userToken
                 },
-                data: { buildID: localStorage.buildID, noteContent: notes.text() },
+                data: {
+                    buildID: localStorage.buildID,
+                    noteContent: notes[0].innerText //.text() doesnt preserve new line chars .html() throws security error
+                },
                 success: function (result) {
                     if (result.success) {
 
@@ -335,13 +389,13 @@ function initNotesButtons() {
                         notes.attr('contenteditable', 'false');
 
                     } else {
-                        
+                        alert("Error: " + error)
                     }
                 },
                 error: function (xhr, status, error) {
                     // ajax error, show error message
                     //$('#login-error').text('An error occurred while logging in.');
-                    alert("Error: " + error);
+                    alert("Error: " + xhr.responseText);
                 }
             });
         }
@@ -351,8 +405,212 @@ function initNotesButtons() {
     });
 }
 
+function initUrlButtons() {
+
+    // Get the buttons and build info section
+    var editButton = $('#url-edit-button');
+    var cancelButton = $('#url-cancel-button');
+    var saveButton = $('#url-save-button');
+    var deleteButton = $('#url-delete-button');
+    var loadButton = $('#url-load-button'); 
+    var nameTextBox = $('#txt-url-name');
+    var urlTextBox = $('#txt-url-url');
+    
+
+    // Edit button click event
+    editButton.on('click', function () {
+        // Hide the edit button, show the cancel and save buttons
+        editingUrl(true);
+
+        var selectedOption = $('#urlSelect option:selected');
+
+        if (selectedOption.data().id == null)
+            deleteButton.hide();
+
+        // Populate the textboxes with data from the selected option
+        nameTextBox.val(selectedOption.data('name'));
+        urlTextBox.val(selectedOption.data('url'));
+
+        // Store the initial content of the textboxes for later use
+        nameTextBoxContent = nameTextBox.val();
+        urlTextBoxContent = urlTextBox.val();
+
+        // Set focus on the name textbox
+        nameTextBox.focus();
+    });
+
+    // Cancel button click event
+    cancelButton.on('click', function () {
+        // Show the edit button, hide the cancel and save buttons
+        editingUrl(false);        
+    });
+
+    // Save button click event
+    saveButton.on('click', function () {
+        var selectedOption = $('#urlSelect option:selected').data();
+
+        // Extract the necessary data
+        var buildUrlID = selectedOption.id;
+        var buildUrl = $('#txt-url-url').val();
+        var buildUrlName = $('#txt-url-name').val();
+        var userToken = localStorage.getItem("token");
+
+        // Perform the save operation
+        if (localStorage.buildID != null) {
+            $.ajax({
+                type: 'POST',
+                url: '/Home/UpdateBuildUrl',
+                headers: {
+                    Authorization: userToken
+                },
+                data: {
+                    buildUrlID: buildUrlID,
+                    buildID: localStorage.buildID,
+                    buildUrl: buildUrl,
+                    buildUrlName: buildUrlName
+                },
+                success: function (result) {
+                    if (result.success) {
+                        editingUrl(false);
+
+                        populateBuildUrls();
+                    } else {
+                        // Handle failure
+                        // For example, display an error message
+                    }
+                },
+                error: function (xhr, status, error) {
+                    // Handle error
+                    alert("Error: " + error);
+                }
+            });
+        }
+    });
+
+    deleteButton.on('click', function () {
+        var selectedOption = $('#urlSelect option:selected').data();
+
+        // Extract the buildUrlID and name
+        var buildUrlID = selectedOption.id;
+        var buildUrlName = selectedOption.name;
+        var userToken = localStorage.getItem("token");
+
+        // Display confirmation dialog
+        var confirmation = confirm("Are you sure you want to delete " + buildUrlName + "?");
+        if (confirmation) {
+            // Perform the delete operation
+            if (localStorage.buildID != null) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/Home/DeleteBuildUrl',
+                    headers: {
+                        Authorization: userToken
+                    },
+                    data: {
+                        buildUrlID: buildUrlID
+                    },
+                    success: function (result) {
+                        if (result.success) {
+  
+
+                            // If the deletion is successful, refresh the list of build URLs
+                            populateBuildUrls();
+                        } else {
+                            // Handle failure
+                            // For example, display an error message
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle error
+                        alert("Error: " + error);
+                    }
+                });
+            }
+        }
+    });
+
+    // Load button click event
+    loadButton.on('click', function () {
+        var selectedUrl = $('#urlSelect option:selected').data('url'); // Get the selected URL from the dropdown
+        $('#tree').attr('src', selectedUrl); // Set the URL of the iframe
+    });
+}
+
+function editingUrl(editing) {
+    // Get the buttons and build info section
+    var urlSelect = $('#urlSelect');
+    var editButton = $('#url-edit-button');
+    var cancelButton = $('#url-cancel-button');
+    var saveButton = $('#url-save-button');
+    var deleteButton = $('#url-delete-button');
+    var loadButton = $('#url-load-button');
+    var nameLabel = $('#lbl-url-name');
+    var nameTextBox = $('#txt-url-name');
+    var urlLabel = $('#lbl-url-url');
+    var urlTextBox = $('#txt-url-url');
+
+    if (editing) {
+        // Show the viewing buttons button, hide editing buttons
+        urlSelect.hide();
+        editButton.hide();
+        loadButton.hide();
+        deleteButton.show();
+        cancelButton.show();
+        saveButton.show();
+        nameLabel.show();
+        nameTextBox.show();
+        urlLabel.show();
+        urlTextBox.show();
+
+        // Disable editing of the url section
+        nameTextBox.prop("readonly", false);
+        urlTextBox.prop("readonly", false);
+    }
+    else {
+        // Show the viewing buttons button, hide editing buttons
+        urlSelect.show();
+        editButton.show();
+        loadButton.show();
+        deleteButton.hide();
+        cancelButton.hide();
+        saveButton.hide();
+        nameLabel.hide();
+        nameTextBox.hide();
+        urlLabel.hide();
+        urlTextBox.hide();
+
+        // Disable editing of the url section
+        nameTextBox.prop("readonly", true);
+        urlTextBox.prop("readonly", true);
+    }
+
+
+}
+function signOut() {
+    localStorage.removeItem("token");
+    window.location.href = "/";
+}
+
+
+
 $(document).ready(function () {
     validateUserToken();
     initBuildForm();
-    initUploadReferenceImageForm();    
+    initUploadReferenceImageForm();   
+
+    // JavaScript code to handle resizing of columns
+    //$('.resizable').on('mousedown', function (e) {
+    //    var column = $(this);
+    //    var startX = e.pageX;
+    //    var startWidth = column.width();
+
+    //    $(document).on('mousemove', function (e) {
+    //        var newWidth = startWidth + (e.pageX - startX);
+    //        column.width(newWidth);
+    //    });
+
+    //    $(document).on('mouseup', function () {
+    //        $(document).off('mousemove');
+    //    });
+    //});
 });

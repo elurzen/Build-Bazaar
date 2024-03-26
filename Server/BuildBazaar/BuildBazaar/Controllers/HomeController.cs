@@ -169,7 +169,7 @@ namespace BuildBazaar.Controllers
                     NoteModel note = new NoteModel();
                     using (MySqlConnection connection = new MySqlConnection(CONNECTIONSTRING))
                     {
-                        var userIDClaim = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+                        //var userIDClaim = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
                         connection.Open();
                         string query = "SELECT * FROM Notes WHERE Notes.buildID = @buildID LIMIT 1;";
                         using (MySqlCommand command = new MySqlCommand(query, connection))
@@ -208,7 +208,7 @@ namespace BuildBazaar.Controllers
                     string filePath = "";
                     using (MySqlConnection connection = new MySqlConnection(CONNECTIONSTRING))
                     {
-                        var userIDClaim = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+                        //var userIDClaim = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
                         connection.Open();
                         string query = "SELECT * FROM Notes WHERE Notes.buildID = @buildID LIMIT 1;";
                         using (MySqlCommand command = new MySqlCommand(query, connection))
@@ -231,6 +231,157 @@ namespace BuildBazaar.Controllers
                         return Json(new { success = false, errorMessage = ex.Message });
                     }
                     return Json(new { success = true });
+                }
+                catch (MySqlException ex)
+                {
+                    return Json(new { success = false, errorMessage = ex.Message });
+                }
+            }
+            else
+            {
+                // Token does not exist, redirect to login page
+                return Json(new { success = false, message = "Invalid Token." });
+            }
+        }
+
+        public ActionResult UpdateBuildUrl(uint? buildUrlID, uint buildID, string buildUrl, string buildUrlName)
+        {
+            JwtSecurityToken token = ValidateToken();
+            if (token != null)
+            {
+                try
+                {
+                    using (MySqlConnection connection = new MySqlConnection(CONNECTIONSTRING))
+                    {
+                        connection.Open();
+                        string query = string.Empty;
+
+                        if (buildUrlID == null)
+                        {
+                            // Create new record
+                            query = "INSERT INTO BuildUrls (buildID, buildUrl, buildUrlName) VALUES (@buildID, @buildUrl, @buildUrlName);";
+                        }
+                        else
+                        {
+                            // Update existing record
+                            query = "UPDATE BuildUrls SET buildUrl = @buildUrl, buildUrlName = @buildUrlName WHERE buildUrlID = @buildUrlID;";
+                        }
+
+                        using (MySqlCommand command = new MySqlCommand(query, connection))
+                        {
+                            command.Parameters.AddWithValue("@buildUrl", buildUrl);
+                            command.Parameters.AddWithValue("@buildUrlName", buildUrlName);
+
+                            if (buildUrlID != null)
+                            {
+                                command.Parameters.AddWithValue("@buildUrlID", buildUrlID);
+                            }
+                            else
+                            {
+                                command.Parameters.AddWithValue("@buildID", buildID);
+                            }
+
+                            int rowsAffected = command.ExecuteNonQuery();
+                            if (rowsAffected > 0)
+                            {
+                                return Json(new { success = true });
+                            }
+                            else
+                            {
+                                return Json(new { success = false, errorMessage = "No records updated." });
+                            }
+                        }
+                    }
+                }
+                catch (MySqlException ex)
+                {
+                    return Json(new { success = false, errorMessage = ex.Message });
+                }
+            }
+            else
+            {
+                // Token does not exist, redirect to login page
+                return Json(new { success = false, message = "Invalid Token." });
+            }
+        }
+
+        public ActionResult GetBuildUrls(uint buildID)
+        {
+            JwtSecurityToken token = ValidateToken();
+            if (token != null)
+            {
+                try
+                {
+                    List<BuildUrlModel> buildUrls = new List<BuildUrlModel>();
+
+                    using (MySqlConnection connection = new MySqlConnection(CONNECTIONSTRING))
+                    {
+                        connection.Open();
+                        string query = "SELECT buildUrlID, buildID, buildUrlName, buildUrl FROM BuildUrls WHERE buildID = @buildID";
+
+                        using (MySqlCommand command = new MySqlCommand(query, connection))
+                        {
+                            command.Parameters.AddWithValue("@buildID", buildID);
+
+                            using (MySqlDataReader reader = command.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+                                    BuildUrlModel buildUrl = new BuildUrlModel
+                                    {
+                                        buildUrlID = Convert.ToUInt32(reader["buildUrlID"]),
+                                        buildID = Convert.ToUInt32(reader["buildID"]),
+                                        buildUrlName = reader["buildUrlName"].ToString(),
+                                        buildUrl = reader["buildUrl"].ToString()
+                                    };
+                                    buildUrls.Add(buildUrl);
+                                }
+                            }
+                        }
+                    }
+
+                    return Json(new { success = true, buildUrls });
+                }
+                catch (MySqlException ex)
+                {
+                    return Json(new { success = false, errorMessage = ex.Message });
+                }
+            }
+            else
+            {
+                // Token does not exist, redirect to login page
+                return Json(new { success = false, message = "Invalid Token." });
+            }
+        }
+
+        public ActionResult DeleteBuildUrl(uint buildUrlID)
+        {
+            JwtSecurityToken token = ValidateToken();
+            if (token != null)
+            {
+                try
+                {
+                    using (MySqlConnection connection = new MySqlConnection(CONNECTIONSTRING))
+                    {
+                        connection.Open();
+
+                        // Delete the record from the database
+                        string query = "DELETE FROM BuildUrls WHERE buildUrlID = @buildUrlID;";
+                        using (MySqlCommand command = new MySqlCommand(query, connection))
+                        {
+                            command.Parameters.AddWithValue("@buildUrlID", buildUrlID);
+
+                            int rowsAffected = command.ExecuteNonQuery();
+                            if (rowsAffected > 0)
+                            {
+                                return Json(new { success = true });
+                            }
+                            else
+                            {
+                                return Json(new { success = false, errorMessage = "No records deleted." });
+                            }
+                        }
+                    }
                 }
                 catch (MySqlException ex)
                 {

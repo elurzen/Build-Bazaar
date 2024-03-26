@@ -169,6 +169,25 @@ body {
     background-color: #555;
 }
 
+#signOutButton {
+    background-color: #f44336; /* Red background */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    position: absolute;
+    bottom: 0;
+}
+
+    #signOutButton:hover {
+        background-color: #d32f2f; /* Darker red on hover */
+    }
+
 img.thumbnail {
     width: 50px;
     height: 50px;
@@ -199,7 +218,7 @@ img.referenceImage {
     min-height: 90vh;
 }
 
-.col-sm-4 {
+.column {
     width: 33.33%;
     padding: 10px;
     background-color: #333;
@@ -208,6 +227,38 @@ img.referenceImage {
     overflow-wrap: break-word;
     overflow: auto;
     max-height: 90vh;
+}
+/*
+.resizable {
+    resize: horizontal;  /*Allow horizontal resizing* /
+    overflow: auto; /*Enable overflow behavior* /
+}
+
+*/
+.column-expanded {
+    width: 33.33%;
+    padding: 10px;
+    background-color: #333;
+    color: #fff;
+    opacity: 0.8;
+    overflow-wrap: break-word;
+    overflow: auto;
+    max-height: 90vh;
+}
+
+.hidden {
+    display: none;
+}
+
+.column-header {
+    display: flex;
+    justify-content:space-between;
+    align-items: center;
+}
+
+.column ul
+{
+    padding-left: 0;
 }
 
 .noscroll {

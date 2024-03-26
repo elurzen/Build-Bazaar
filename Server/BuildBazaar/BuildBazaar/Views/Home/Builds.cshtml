@@ -15,29 +15,44 @@
 
     <div id="sidebar">
         <h2>Builds</h2>
-        <ul style="list-style-type:none;"></ul>
+        <ul id="sidebarBuildList" style="list-style-type: none;"></ul>
+        <button id="signOutButton" onclick="signOut()">Sign Out</button>
     </div>
+
 
     <div id="content">
         <div class="overlay"></div>
         <div class="row">
-            <div class="col-sm-4">
+            <div class="column resizable" id="notesColumn">
                 <div id="build-info">
-                    <h2>Build Info</h2>
-                    <p id="notes">Here's some text with <a href="#">a clickable link</a>.</p>
-                    <div id="edit-buttons">
-                        <button id="edit-button">Edit</button>
-                        <button id="cancel-button" style="display: none;">Cancel</button>
-                        <button id="save-button" style="display: none;">Save</button>
+                    <div id="build-info-header" class="column-header">
+                        <h2>Build Info</h2>
+                        <button id="notes-edit-button">Edit</button>
+                        <button id="notes-save-button" style="display: none;">Save</button>
+                        <button id="notes-cancel-button" style="display: none;">Cancel</button>
                     </div>
+                    <p id="notes">Here's some text with <a href="#">a clickable link</a>.</p>
                 </div>
             </div>
-            <div class="col-sm-4 noscroll">
-                <iframe id="tree" src="https://poeplanner.com/" style="width:100%; height: 100%;"></iframe>
+            <div class="column noscroll resizable" id="iFrameColumn">
+                <div id="poeplanner-header" class="column-header">
+                    <select id="urlSelect"></select>
+                    <label id="lbl-url-name" class="hidden">Name: </label>
+                    <input id="txt-url-name" class="hidden" type="text" readonly>
+                    <label id="lbl-url-url" class="hidden">URL: </label>
+                    <input id="txt-url-url" class="hidden" type="text" readonly>
+                    <button id="url-edit-button">Edit</button>
+                    <button id="url-save-button" class="hidden">Save</button>
+                    <button id="url-delete-button" class="hidden">Delete</button>
+                    <button id="url-cancel-button" class="hidden">Cancel</button>
+                    <button id="url-load-button">Load</button>
+                </div>
+                <iframe id="tree" src="https://poeplanner.com/" style="width:100%; height: 95%;"></iframe>
             </div>
-            <div class="col-sm-4">
+            <div class="column resizable" id="imagesColumn">
                 <div id="referenceImages">
                     <button id="upload-image-button" onclick="showUploadReferenceImageForm()">Upload Image</button>
+                    <ul id="referenceImageList" style="list-style-type: none;"></ul>
                 </div>
             </div>
         </div>
@@ -81,8 +96,6 @@
             </div>
         </div>
     </div>
-
-
 </body>
 
 

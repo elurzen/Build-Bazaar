@@ -197,6 +197,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\ImageModel.cs" />
+    <Compile Include="Models\BuildUrlModel.cs" />
     <Compile Include="Models\NoteModel.cs" />
     <Compile Include="Models\BuildModel.cs" />
     <Compile Include="Models\UserModel.cs" />
