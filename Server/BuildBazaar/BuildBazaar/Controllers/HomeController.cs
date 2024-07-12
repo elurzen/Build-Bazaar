@@ -30,11 +30,104 @@ namespace BuildBazaar.Controllers
             return View();
         }
 
+        private void CreateExampleBuild(int userID, MySqlConnection connection)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                try
+                {
+                    var buildName = "Example Build";
+                    var buildQuery = "INSERT INTO Builds (buildName, userID) VALUES (@buildName, @userID); SELECT LAST_INSERT_ID()";
+                    int buildID;
+                    using (MySqlCommand command = new MySqlCommand(buildQuery, connection, transaction))
+                    {
+                        command.Parameters.AddWithValue("@buildName", buildName);
+                        command.Parameters.AddWithValue("@userID", userID);
+                        buildID = Convert.ToInt32(command.ExecuteScalar());
+                    }
+
+                    // Paths and filenames
+                    var exampleImageFileName = "kirac.png";
+                    var userImageFileName = $"{Guid.NewGuid()}.png"; // Generate a unique filename for the user's copy
+                    var contentImagePath = Server.MapPath("~/Content/ExampleBuild/" + exampleImageFileName);
+                    var userImageFilePath = "../Users/" + userID + "/Thumbnails/" + userImageFileName;
+                    var userImageSavePath = Server.MapPath(userImageFilePath);
+                    var userBuildPath = Server.MapPath("~/Users/" + userID + "/" + buildID);
+                    var exampleNotesFilePath = Server.MapPath("~/Content/ExampleBuild/notes.txt");
+
+                    // Insert image record
+                    var imageQuery = "INSERT INTO Images (filePath, imageOrder, typeID, buildID, userID) VALUES (@filePath, 0, 1, @buildID, @userID)";
+                    using (MySqlCommand command = new MySqlCommand(imageQuery, connection, transaction))
+                    {
+                        command.Parameters.AddWithValue("@filePath", userImageFilePath);
+                        command.Parameters.AddWithValue("@buildID", buildID);
+                        command.Parameters.AddWithValue("@userID", userID);
+                        command.ExecuteNonQuery();
+                    }
+
+                    var noteFilePath = "../Users/" + userID + "/" + buildID + "/notes.txt";
+                    var noteSavePath = Server.MapPath(noteFilePath);
+                    var noteQuery = "INSERT INTO Notes (filePath, buildID) VALUES (@filePath, @buildID)";
+                    using (MySqlCommand command = new MySqlCommand(noteQuery, connection, transaction))
+                    {
+                        command.Parameters.AddWithValue("@filePath", noteFilePath);
+                        command.Parameters.AddWithValue("@buildID", buildID);
+                        command.ExecuteNonQuery();
+                    }
+
+                    var userBuildImagesFilePath = "../Users/" + userID + "/" + buildID;
+                    var exampleImagesPath = Server.MapPath("~/Content/ExampleBuild/images");
+                    int orderCounter = 0;
+                    foreach (var filePath in Directory.GetFiles(exampleImagesPath))
+                    {
+                        var fileName = Path.GetFileName(filePath);
+                        var userFilePath = userBuildImagesFilePath + "/" + fileName;
+
+                        imageQuery = "INSERT INTO Images (filePath, imageOrder, typeID, buildID, userID) VALUES (@filePath, @imageOrder, 2, @buildID, @userID)";
+                        using (MySqlCommand command = new MySqlCommand(imageQuery, connection, transaction))
+                        {
+                            command.Parameters.AddWithValue("@filePath", userFilePath);
+                            command.Parameters.AddWithValue("@imageOrder", orderCounter);
+                            command.Parameters.AddWithValue("@buildID", buildID);
+                            command.Parameters.AddWithValue("@userID", userID);
+                            
+                            command.ExecuteNonQuery();
+                        }
+                        orderCounter++;
+                    }
+
+                    transaction.Commit();
+
+                    // Create directory if it doesn't exist
+                    Directory.CreateDirectory(Path.GetDirectoryName(userImageSavePath));
+                    // Copy example image to user-specific folder
+                    System.IO.File.Copy(contentImagePath, userImageSavePath);
+
+                    var combinedNotesPath = Path.Combine(userBuildPath, "notes.txt");
+                    Directory.CreateDirectory(Path.GetDirectoryName(combinedNotesPath));
+                    System.IO.File.Copy(exampleNotesFilePath, combinedNotesPath);
+                    foreach (var filePath in Directory.GetFiles(exampleImagesPath))
+                    {
+                        var fileName = Path.GetFileName(filePath);
+                        System.IO.File.Copy(filePath, Path.Combine(userBuildPath, fileName));
+                    }
+
+                 
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw ex;
+                }
+            }
+        }
+
         public ActionResult CreateBuild(BuildModel build)
         {
             JwtSecurityToken token = ValidateToken();
             if (token != null)
             {
+                int buildID =-1;
                 using (MySqlConnection connection = new MySqlConnection(CONNECTIONSTRING))
                 {
                     var userIDClaim = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
@@ -50,7 +143,6 @@ namespace BuildBazaar.Controllers
                                 if (file != null && file.ContentLength > 0)
                                 {
                                     var buildQuery = "INSERT INTO Builds (buildName, userID) VALUES (@buildName, @userID); SELECT LAST_INSERT_ID()";
-                                    int buildID;
                                     using (MySqlCommand command = new MySqlCommand(buildQuery, connection, transaction))
                                     {
                                         command.Parameters.AddWithValue("@buildName", build.buildName);
@@ -107,6 +199,93 @@ namespace BuildBazaar.Controllers
                     }
 
                 }
+                return Json(new { success = true, message = buildID});
+            }
+            else
+            {
+                // Token does not exist, redirect to login page
+                return Json(new { success = false, message = "Invalid Token." });
+            }
+        }
+
+        public ActionResult EditBuild(BuildModel build)
+        {
+            JwtSecurityToken token = ValidateToken();
+            if (token != null)
+            {
+                using (MySqlConnection connection = new MySqlConnection(CONNECTIONSTRING))
+                {
+                    var userIDClaim = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+                    connection.Open();
+
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            // Check if the build exists and belongs to the user
+                            var checkBuildQuery = "SELECT COUNT(*) FROM Builds WHERE buildID = @buildID AND userID = @userID";
+                            int buildCount;
+                            using (MySqlCommand command = new MySqlCommand(checkBuildQuery, connection, transaction))
+                            {
+                                command.Parameters.AddWithValue("@buildID", build.buildID);
+                                command.Parameters.AddWithValue("@userID", userIDClaim);
+                                buildCount = Convert.ToInt32(command.ExecuteScalar());
+                            }
+
+                            if (buildCount == 1)
+                            {
+                                // Update build name if provided
+                                if (!string.IsNullOrEmpty(build.buildName))
+                                {
+                                    var updateBuildQuery = "UPDATE Builds SET buildName = @buildName WHERE buildID = @buildID AND userID = @userID";
+                                    using (MySqlCommand command = new MySqlCommand(updateBuildQuery, connection, transaction))
+                                    {
+                                        command.Parameters.AddWithValue("@buildName", build.buildName);
+                                        command.Parameters.AddWithValue("@buildID", build.buildID);
+                                        command.Parameters.AddWithValue("@userID", userIDClaim);
+                                        command.ExecuteNonQuery();
+                                    }
+                                }
+
+                                // Update build image if provided
+                                if (Request.Files.Count > 0)
+                                {
+                                    HttpPostedFileBase file = Request.Files[0];
+                                    if (file != null && file.ContentLength > 0)
+                                    {
+                                        var imageFileName = Path.GetFileName(file.FileName);
+                                        var imageFilePath = "../Users/" + userIDClaim + "/Thumbnails/" + imageFileName;
+                                        var imageSavePath = Server.MapPath(imageFilePath);
+
+                                        var updateImageQuery = "UPDATE Images SET filePath = @filePath WHERE buildID = @buildID AND userID = @userID";
+                                        using (MySqlCommand command = new MySqlCommand(updateImageQuery, connection, transaction))
+                                        {
+                                            command.Parameters.AddWithValue("@filePath", imageFilePath);
+                                            command.Parameters.AddWithValue("@buildID", build.buildID);
+                                            command.Parameters.AddWithValue("@userID", userIDClaim);
+                                            command.ExecuteNonQuery();
+                                        }
+
+                                        Directory.CreateDirectory(Path.GetDirectoryName(imageSavePath));
+                                        file.SaveAs(imageSavePath);
+                                    }
+                                }
+
+                                transaction.Commit();
+                            }
+                            else
+                            {
+                                return Json(new { success = false, message = "Build not found or you do not have permission to edit this build." });
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            throw ex;
+                        }
+                    }
+                }
+
                 return Json(new { success = true });
             }
             else
@@ -115,6 +294,93 @@ namespace BuildBazaar.Controllers
                 return Json(new { success = false, message = "Invalid Token." });
             }
         }
+
+        public ActionResult DeleteBuild(int buildID)
+        {
+            JwtSecurityToken token = ValidateToken();
+            if (token != null)
+            {
+                using (MySqlConnection connection = new MySqlConnection(CONNECTIONSTRING))
+                {
+                    var userIDClaim = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+                    connection.Open();
+
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            // Check if the build exists and belongs to the user
+                            var checkBuildQuery = "SELECT COUNT(*) FROM Builds WHERE buildID = @buildID AND userID = @userID";
+                            int buildCount;
+                            using (MySqlCommand command = new MySqlCommand(checkBuildQuery, connection, transaction))
+                            {
+                                command.Parameters.AddWithValue("@buildID", buildID);
+                                command.Parameters.AddWithValue("@userID", userIDClaim);
+                                buildCount = Convert.ToInt32(command.ExecuteScalar());
+                            }
+
+                            if (buildCount == 1)
+                            {
+                                // Delete from Images table
+                                var deleteImagesQuery = "DELETE FROM Images WHERE buildID = @buildID AND userID = @userID";
+                                using (MySqlCommand command = new MySqlCommand(deleteImagesQuery, connection, transaction))
+                                {
+                                    command.Parameters.AddWithValue("@buildID", buildID);
+                                    command.Parameters.AddWithValue("@userID", userIDClaim);
+                                    command.ExecuteNonQuery();
+                                }
+
+                                // Delete from BuildUrls table
+                                var deleteBuildUrlsQuery = "DELETE FROM BuildUrls WHERE buildID = @buildID";
+                                using (MySqlCommand command = new MySqlCommand(deleteBuildUrlsQuery, connection, transaction))
+                                {
+                                    command.Parameters.AddWithValue("@buildID", buildID);
+                                    command.ExecuteNonQuery();
+                                }
+
+                                // Delete from Notes table
+                                var deleteNotesQuery = "DELETE FROM Notes WHERE buildID = @buildID";
+                                using (MySqlCommand command = new MySqlCommand(deleteNotesQuery, connection, transaction))
+                                {
+                                    command.Parameters.AddWithValue("@buildID", buildID);
+                                    command.ExecuteNonQuery();
+                                }
+
+                                // Delete from Builds table
+                                var deleteBuildQuery = "DELETE FROM Builds WHERE buildID = @buildID AND userID = @userID";
+                                using (MySqlCommand command = new MySqlCommand(deleteBuildQuery, connection, transaction))
+                                {
+                                    command.Parameters.AddWithValue("@buildID", buildID);
+                                    command.Parameters.AddWithValue("@userID", userIDClaim);
+                                    command.ExecuteNonQuery();
+                                }
+
+                                // Commit the transaction
+                                transaction.Commit();
+                            }
+                            else
+                            {
+                                return Json(new { success = false, message = "Build not found or you do not have permission to delete this build." });
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            throw ex;
+                        }
+                    }
+                }
+
+                return Json(new { success = true });
+            }
+            else
+            {
+                // Token does not exist, return an error message
+                return Json(new { success = false, message = "Invalid Token." });
+            }
+        }
+
+
 
         public ActionResult GetBuilds()
         {
@@ -414,16 +680,28 @@ namespace BuildBazaar.Controllers
                                 HttpPostedFileBase file = Request.Files[0];
                                 if (file != null && file.ContentLength > 0)
                                 {
+                                    
+
                                     int buildID = int.Parse(Request.Form["buildID"]);
                                     var imageFileName = Path.GetFileName(file.FileName);
                                     var imageFilePath = "../Users/" + userIDClaim + "/" + buildID + "/" + imageFileName;
                                     var imageSavePath = Server.MapPath(imageFilePath);
-                                    var imageQuery = "INSERT INTO Images (filePath, typeID, buildID, userID) VALUES (@filePath, 2, @buildID, @userID)";
+
+                                    int maxOrder;
+                                    var maxOrderQuery = "SELECT IFNULL(MAX(imageOrder), 0) FROM Images WHERE buildID = @buildID";
+                                    using (MySqlCommand command = new MySqlCommand(maxOrderQuery, connection, transaction))
+                                    {
+                                        command.Parameters.AddWithValue("@buildID", buildID);
+                                        maxOrder = Convert.ToInt32(command.ExecuteScalar());
+                                    }
+
+                                    var imageQuery = "INSERT INTO Images (filePath, imageOrder, typeID, buildID, userID) VALUES (@filePath, @imageOrder, 2, @buildID, @userID)";
                                     using (MySqlCommand command = new MySqlCommand(imageQuery, connection, transaction))
                                     {
                                         command.Parameters.AddWithValue("@filePath", imageFilePath);
                                         command.Parameters.AddWithValue("@buildID", buildID);
                                         command.Parameters.AddWithValue("@userID", userIDClaim);
+                                        command.Parameters.AddWithValue("@imageOrder", maxOrder + 1);
                                         command.ExecuteNonQuery();
                                     }
 
@@ -476,11 +754,105 @@ namespace BuildBazaar.Controllers
                                     image.imageID = Convert.ToUInt32(reader["imageID"]);
                                     image.buildID = Convert.ToUInt32(reader["buildID"]);
                                     image.filePath = reader["filePath"].ToString();
+                                    image.imageOrder = Convert.ToInt32(reader["imageOrder"]);
                                     images.Add(image);
                                 }
                         }
                     }
                     return Json(new { success = true, images });
+                }
+                catch (MySqlException ex)
+                {
+                    return Json(new { success = false, errorMessage = ex.Message });
+                }
+            }
+            else
+            {
+                // Token does not exist, redirect to login page
+                return Json(new { success = false, message = "Invalid Token." });
+            }
+        }
+
+        [HttpPost]
+        public JsonResult SaveImageOrder(List<ImageOrder> newOrder, int buildID)
+        {
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(CONNECTIONSTRING))
+                {
+                    connection.Open();
+
+                    foreach (var item in newOrder)
+                    {
+                        var query = "UPDATE Images SET imageOrder = @imageOrder WHERE imageID = @imageID AND buildID = @buildID";
+                        using (var command = new MySqlCommand(query, connection))
+                        {
+                            command.Parameters.AddWithValue("@imageOrder", item.imageOrder);
+                            command.Parameters.AddWithValue("@imageID", item.imageID);
+                            command.Parameters.AddWithValue("@buildID", buildID);
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                }
+
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+
+        public ActionResult DeleteReferenceImage(uint imageID)
+        {
+            JwtSecurityToken token = ValidateToken();
+            if (token != null)
+            {
+                try
+                {
+                    using (MySqlConnection connection = new MySqlConnection(CONNECTIONSTRING))
+                    {
+                        var userIDClaim = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+                        connection.Open();
+
+                        // Retrieve the file path from the database based on the imageID
+                        string filePathQuery = "SELECT filePath FROM Images WHERE imageID = @imageID AND userID = @userID;";
+                        using (MySqlCommand filePathCommand = new MySqlCommand(filePathQuery, connection))
+                        {
+                            filePathCommand.Parameters.AddWithValue("@imageID", imageID);
+                            filePathCommand.Parameters.AddWithValue("@userID", userIDClaim);
+                            string filePath = filePathCommand.ExecuteScalar()?.ToString();
+
+                            // Delete the file from the server
+                            if (!string.IsNullOrEmpty(filePath))
+                            {
+                                string fullPath = Server.MapPath(filePath);
+                                if (System.IO.File.Exists(fullPath))
+                                {
+                                    System.IO.File.Delete(fullPath);
+                                }
+                            }
+                        }
+
+                        // Delete the record from the database
+                        string query = "DELETE FROM Images WHERE imageID = @imageID AND userID = @userID;";
+                        using (MySqlCommand command = new MySqlCommand(query, connection))
+                        {
+                            command.Parameters.AddWithValue("@imageID", imageID);
+                            command.Parameters.AddWithValue("@userID", userIDClaim);
+
+                            int rowsAffected = command.ExecuteNonQuery();
+                            if (rowsAffected > 0)
+                            {
+                                return Json(new { success = true });
+                            }
+                            else
+                            {
+                                return Json(new { success = false, errorMessage = "No records deleted." });
+                            }
+                        }
+                    }
                 }
                 catch (MySqlException ex)
                 {
@@ -553,10 +925,10 @@ namespace BuildBazaar.Controllers
                     connection.Open();
 
                     // check if email already exists
-                    string query = "SELECT COUNT(*) FROM Users WHERE email = @email";
+                    string query = "SELECT COUNT(*) FROM Users WHERE UPPER(email) = @email";
                     using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
-                        command.Parameters.AddWithValue("@email", user.email);
+                        command.Parameters.AddWithValue("@email", user.email.ToUpper());
                         int count = Convert.ToInt32(command.ExecuteScalar());
 
                         if (count > 0)
@@ -566,10 +938,10 @@ namespace BuildBazaar.Controllers
                         }
                     }
 
-                    query = "SELECT COUNT(*) FROM Users WHERE username = @username";
+                    query = "SELECT COUNT(*) FROM Users WHERE UPPER(username) = @username";
                     using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
-                        command.Parameters.AddWithValue("@username", user.username);
+                        command.Parameters.AddWithValue("@username", user.username.ToUpper());
                         int count = Convert.ToInt32(command.ExecuteScalar());
 
                         if (count > 0)
@@ -588,7 +960,19 @@ namespace BuildBazaar.Controllers
                         command.Parameters.AddWithValue("@password", hashedPassword);
                         command.ExecuteNonQuery();
                     }
+
+                    // Retrieve the userID of the newly created user
+                    int userID;
+                    query = "SELECT LAST_INSERT_ID()";
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
+                    {
+                        userID = Convert.ToInt32(command.ExecuteScalar());
+                    }
+
+                    // Create an example build for the new user
+                    CreateExampleBuild(userID, connection);
                 }
+
                 return Json(new { success = true });
             }
             catch (MySqlException ex)
@@ -606,11 +990,17 @@ namespace BuildBazaar.Controllers
                 using (MySqlConnection connection = new MySqlConnection(CONNECTIONSTRING))
                 {
                     connection.Open();
-                    string query = "SELECT * FROM Users WHERE username = @username OR email = @email";
+                    string query = "SELECT * FROM Users WHERE UPPER(username) = @username";/* OR UPPER(email) = @email";*/
                     using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
-                        command.Parameters.AddWithValue("@username", user.username);
-                        command.Parameters.AddWithValue("@email", user.email);
+                        if (user.username != null)
+                            command.Parameters.AddWithValue("@username", user.username.ToUpper());
+                        else
+                            command.Parameters.AddWithValue("@username", null);
+                        //if (user.email != null) 
+                        //    command.Parameters.AddWithValue("@email", user.email.ToUpper());
+                        //else
+                        //    command.Parameters.AddWithValue("@email", null);
                         using (MySqlDataReader reader = command.ExecuteReader())
                         {
                             if (reader.Read())

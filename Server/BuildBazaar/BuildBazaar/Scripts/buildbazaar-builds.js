@@ -14,19 +14,21 @@ function validateUserToken() {
             success: function (result) {
                 if (result.success) {
 
-                    //populate build list sidebar
-                    populateBuilds();
+                    ////populate build list sidebar
+                    //populateBuilds();
 
-                    //populate notes section    
-                    var firstLi = $('#sidebar li:first');
-                    var buildID = firstLi.attr('data-buildID');
-                    if (buildID != null) {
-                        populateNote();
-                        populateReferenceImages()
-                        initNotesButtons();
-                        populateBuildUrls();
-                        initUrlButtons();
-                    }
+                    ////populate notes section    
+                    //var firstLi = $('#sidebar li:first');
+                    //var buildID = firstLi.attr('data-buildID');
+                    //localStorage.setItem('buildID', buildID);
+                    //if (buildID != null) {
+                    //    populateNote();
+                    //    populateReferenceImages()
+                    //    initNotesButtons();
+                    //    populateBuildUrls();
+                    //    initUrlButtons();
+                    //    //$("#content").show();
+                    //}
 
                 } else {
                     window.location.href = '/';
@@ -68,6 +70,9 @@ function initBuildForm() {
                 contentType: false,
                 success: function (response) {
                     // Hide the form and refresh the page to show the new build
+                    if (response.message != -1) {
+                        localStorage.setItem('buildID', response.message);
+                    }
                     hideAddBuildForm();
                     window.location.reload();
                 },
@@ -80,15 +85,114 @@ function initBuildForm() {
     });
 }
 
+function initEditBuildForm() {
+    $('#edit-build-form').submit(function (event) {
+        event.preventDefault(); // prevent form from submitting
+
+        var userToken = localStorage.getItem("token");
+        if (userToken == null) {
+            window.location.href = "/";
+        }
+        if (userToken != null) {
+            var buildID = $("#edit-build-id").val();
+            var name = $("#edit-build-name").val();
+            var image = $("#edit-build-image")[0].files[0];
+            var formData = new FormData();
+
+            formData.append("buildID", buildID);
+            formData.append("buildName", name);
+            formData.append("image", image);
+
+            $.ajax({
+                url: "/Home/EditBuild",
+                headers: {
+                    Authorization: userToken
+                },
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    // Hide the form and refresh the page to show the updated build
+                    hideEditBuildForm();
+                    window.location.reload();
+                },
+                error: function (xhr, status, error) {
+                    // Show an error message if the request failed
+                    alert("Failed to update build: " + xhr.responseText);
+                }
+            });
+        }
+    });
+
+    $('#delete-build-button').click(function () {
+        var userToken = localStorage.getItem("token");
+        if (userToken == null) {
+            window.location.href = "/";
+        }
+        if (userToken != null) {
+            var buildID = $("#edit-build-id").val();
+            if (confirm("Are you sure you want to delete this build?")) {
+                $.ajax({
+                    url: "/Home/DeleteBuild",
+                    headers: {
+                        Authorization: userToken
+                    },
+                    type: "POST",
+                    data: { buildID: buildID },
+                    success: function (response) {
+                        if (response.success) {
+                            // Hide the form and refresh the page to show the updated build list
+                            if (buildID == localStorage.buildID)
+                                localStorage.removeItem('buildID');
+                                
+                            hideEditBuildForm();
+                            window.location.reload();
+                        } else {
+                            alert("Failed to delete build: " + response.message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        // Show an error message if the request failed
+                        alert("Failed to delete build: " + xhr.responseText);
+                    }
+                });
+            }
+        }
+    });
+}
+
+// Initialize the form
+$(document).ready(function () {
+    initEditBuildForm();
+});
+
+
 function showAddBuildForm() {
-    //document.getElementById("add-build-form").style.display = "block";
+    $('#new-build-form')[0].reset();
+    $("#popup-overlay").show();
     $("#add-build-form").show();
 }
 
 function hideAddBuildForm() {
-    //document.getElementById("add-build-form").style.display = "none"
+    $("#popup-overlay").hide();
     $("#add-build-form").hide();
 }
+
+function showEditBuildForm(buildID, imagePath, buildName) {
+
+    $('#edit-build-img').attr('src', imagePath);
+    $('#edit-build-id').val(buildID);
+    $('#edit-build-name').val(buildName);
+    $("#popup-overlay").show();
+    $("#edit-build-form").show();
+}
+
+function hideEditBuildForm() {
+    $("#edit-build-form").hide();
+    $("#popup-overlay").hide();
+}
+
 
 function initUploadReferenceImageForm() {
     $('#upload-reference-image-form').submit(function (event) {
@@ -129,12 +233,11 @@ function initUploadReferenceImageForm() {
 }
 
 function showUploadReferenceImageForm() {
-    //document.getElementById("upload-reference-image-form").style.display = "block";
+    $('#reference-image').val('');
     $("#upload-reference-image-form").show();
 }
 
 function hideUploadReferenceImageForm() {
-    //document.getElementById("upload-reference-image-form").style.display = "none"
     $("#upload-reference-image-form").hide();
 }
 
@@ -150,44 +253,74 @@ function populateBuilds() {
         success: function (result) {
             // Get the list container element
             var list = $('#sidebarBuildList');
+            var foundBuild = false;
+            var currentBuildID = localStorage.buildID;
 
-            // Clear the list 
+            // Clear the list
             //list.empty();
-            //list.append($('h2').text('Builds'));                            
+            //list.append($('h2').text('Builds'));
             //This seems to be working with it commented out, but I'll leave it here
             //it was putting multiple "Builds" in the list, but I think it was doing it for every
             //h2 header element on the page, and this started happening after I added the columns
 
+            
+
             // Iterate through the rows returned by the database
             for (let i = 0; i < result.builds.length; i++) {
-                record = result.builds[i];
+                let record = result.builds[i]; /* IMPORTANT added "let" to start of line, delete if this stuff breaks */
                 // Create an <li> element for the row
-                var li = $('<li>').addClass('build-item').attr('data-buildID', record.buildID);
+                let li = $('<li>').addClass('build-item').attr('data-buildID', record.buildID);
+                if (currentBuildID == record.buildID) {
+                    foundBuild = true;
+                    li.addClass('selected-build'); // Highlight the current build
+                }
                 li.on('click', function () {
                     var buildID = $(this).attr('data-buildID');
                     localStorage.setItem('buildID', buildID);
                     ///alert("clicked buildID: " + buildID);
+                    $('#sidebarBuildList li').removeClass('selected-build'); // Remove highlight from all builds
+                    $(this).addClass('selected-build'); // Highlight the clicked build
                     populateNote();
                     populateReferenceImages();
                     populateBuildUrls();
+                    $("#main-row").removeClass("hidden-children");
                 });
                 //var splits = record.imageName.split('.');
                 //var extension = splits[splits.length - 1];
                 //var imagePath = "../UploadedFiles/" + record.imageID + '.' + extension;
-                var imagePath = record.filePath;
+                let imagePath = record.filePath;
                 // Create an <img> element for the image
-                var img = $('<img>').attr('src', imagePath).addClass('thumbnail');
+                let buildImg = $('<img>').attr('src', imagePath).addClass('thumbnail');
 
                 // Create a <h3> element for the build name
-                var h4 = $('<h4>').text(record.buildName);
+                let buildName = $('<h4>').text(record.buildName);
+
+                let editImg = $('<img>')
+                    .attr('src', "../Media/edit.png")
+                    .addClass('editImage')
+                    .on('click', function (e) {
+                        e.stopPropagation();
+                        showEditBuildForm(record.buildID, imagePath, record.buildName)
+                    });
 
                 // Append the <img> and <h3> elements to the <li> element
-                li.append(img).append(h4);
+                li.append(buildImg).append(buildName).append(editImg);
 
                 // Append the <li> element to the list
                 list.append(li);
+
             }
-            var newBuildLink = $('<a>').attr('href', '#').text('+New Build').click(showAddBuildForm);
+            if (result.builds.length == 0) {
+                localStorage.removeItem('buildID');
+                $("#main-row").addClass("hidden-children") 
+            }
+            else if (!foundBuild) {
+                var firstLi = $('#sidebar li:first');
+                var buildID = firstLi.attr('data-buildID');
+                localStorage.setItem('buildID', buildID);
+                firstLi.addClass('selected-build'); // Highlight the first build if none are selected
+            }
+            var newBuildLink = $('<a>').attr('href', '#').attr('data-buildID', '+New Build').text('+New Build').click(showAddBuildForm);
             list.append($('<li>').append(newBuildLink)).css("list-style-type", "none");
         },
         error: function (xhr, status, error) {
@@ -294,29 +427,146 @@ function populateReferenceImages() {
             var list = $('#referenceImageList');
             list.empty();
 
+            result.images.sort(function (a, b) {
+                return a.imageOrder - b.imageOrder;
+            });
+            
             // Iterate through the rows returned by the database
             for (let i = 0; i < result.images.length; i++) {
                 record = result.images[i];
                 // Create an <li> element for the row
-                var li = $('<li>').addClass('build-item').attr('data-buildID', record.buildID);
-                li.on('click', function () {
-                    alert("clicked image");
+                var li = $('<li>').addClass('build-item').attr('data-imageID', record.imageID).attr('data-imageOrder', record.imageOrder);
+
+                // Create a wrapper div for the image
+                var wrapperDiv = $('<div>').addClass('image-wrapper');
+
+                // Create an <img> element for the image
+                var img = $('<img>').attr('src', record.filePath).addClass('referenceImage');
+
+                // Create a <button> element for the delete button with an image
+                var deleteImage = $('<img>').addClass('delete-button')
+                var expandImage = $('<img>').addClass('expand-button').data('imageElement', img);
+
+                // Add click event for the delete button
+                deleteImage.on('click', function () {
+                    event.stopPropagation();
+                    // Handle delete button click event
+                    var confirmation = confirm("Are you sure you want to delete this image?");
+                    if (confirmation) {
+                        var imageContainer = $(this).parent(); // Get the parent image wrapper
+                        var imageID = record.imageID; // Assuming you have an image ID available in the record
+                        // Call the function to delete the reference image
+                        deleteReferenceImage(imageID) == true
+                    }
                 });
 
-                var imagePath = record.filePath;
-                // Create an <img> element for the image
-                var img = $('<img>').attr('src', imagePath).addClass('referenceImage');
+                // Add click event for the fullscreen button
+                expandImage.on('click', function () {
+                    event.stopPropagation();
+                    // Handle fullscreen button click event
+                    var imgElement = $(this).data('imageElement');
+                    showModal(imgElement.attr('src'));
+                });
 
-                // Append the <img> and <h3> elements to the <li> element
-                li.append(img)
-
+                // Append the <img> element to the wrapper div
+                wrapperDiv.append(img, deleteImage, expandImage);
+                // Append the wrapper div to the <li> element
+                li.append(wrapperDiv);
                 // Append the <li> element to the list
                 list.append(li);
             }
+            // Make the images sortable
+            list.sortable({
+                update: function (event, ui) {
+                    // Get the new order of the images
+                    var newOrder = list.children().map(function (index, element) {
+                        return {
+                            imageID: $(element).attr('data-imageID'),
+                            imageOrder: index
+                        };
+                    }).get();
+
+                    // Save the new order
+                    saveImageOrder(newOrder);
+                }
+            });
         },
         error: function (xhr, status, error) {
             // ajax error, show error message
             //$('#login-error').text('An error occurred while logging in.');
+            alert("Error: " + error);
+        }
+    });
+}
+
+function saveImageOrder(newOrder) {
+    var userToken = localStorage.getItem("token");
+
+    $.ajax({
+        type: 'POST',
+        url: '/Home/SaveImageOrder',
+        headers: {
+            Authorization: userToken
+        },
+        contentType: 'application/json',
+        data: JSON.stringify({
+            newOrder: newOrder,
+            buildID: localStorage.buildID
+        }),
+        success: function (result) {
+            if (result.success) {
+                console.log('Image order saved successfully.');
+            } else {
+                console.log('Error saving image order.');
+            }
+        },
+        error: function (xhr, status, error) {
+            console.log('Error: ' + error);
+        }
+    });
+}
+
+function showModal(imageUrl) {
+    // Create modal elements
+    var modal = $('<div>').addClass('modal');
+    var modalContent = $('<img>').attr('src', imageUrl).addClass('modal-content');
+    var closeModal = $('<span>').addClass('close-modal').html('&times;');
+
+    // Append elements to the modal
+    modal.append(modalContent, closeModal);
+
+    // Append modal to body
+    $('body').append(modal);
+
+    // Close modal when clicking on the close button
+    closeModal.on('click', function () {
+        modal.remove();
+    });
+
+    // Close modal when clicking outside the modal content
+    $(window).on('click', function (event) {
+        if ($(event.target).is(modal)) {
+            modal.remove();
+        }
+    });
+}
+
+function deleteReferenceImage(imageID) {
+    var userToken = localStorage.getItem("token");
+    $.ajax({
+        type: 'POST',
+        url: '/Home/DeleteReferenceImage', // Adjust the URL as per your actual route
+        headers: {
+            Authorization: userToken // Include the user token if needed
+        },
+        data: {
+            imageID: imageID
+        },
+        success: function (response) {
+            populateReferenceImages();
+        },
+        error: function (xhr, status, error) {
+            // Handle the error response, if needed
             alert("Error: " + error);
         }
     });
@@ -536,6 +786,15 @@ function initUrlButtons() {
     });
 }
 
+function initSidebarToggle() {
+    $('#sidebarToggle').click(function () {
+        $('#sidebar').toggleClass('collapsed');
+        $('#content').toggleClass('collapsed');
+        columns.forEach(column => column.classList.toggle('collapsed'));            
+        $('.sidebar-content').toggle();
+    });
+}
+
 function editingUrl(editing) {
     // Get the buttons and build info section
     var urlSelect = $('#urlSelect');
@@ -586,31 +845,28 @@ function editingUrl(editing) {
 
 
 }
-function signOut() {
+
+
+
+function logout() {
     localStorage.removeItem("token");
+    localStorage.removeItem("buildID");
     window.location.href = "/";
 }
-
-
 
 $(document).ready(function () {
     validateUserToken();
     initBuildForm();
-    initUploadReferenceImageForm();   
+    initEditBuildForm();
+    initUploadReferenceImageForm();  
+    initNotesButtons();
+    initUrlButtons();
+    initSidebarToggle();
+    populateBuilds();
+    if (localStorage.hasOwnProperty('buildID')){
+        populateNote();
+        populateReferenceImages();
+        populateBuildUrls();
+    }
 
-    // JavaScript code to handle resizing of columns
-    //$('.resizable').on('mousedown', function (e) {
-    //    var column = $(this);
-    //    var startX = e.pageX;
-    //    var startWidth = column.width();
-
-    //    $(document).on('mousemove', function (e) {
-    //        var newWidth = startWidth + (e.pageX - startX);
-    //        column.width(newWidth);
-    //    });
-
-    //    $(document).on('mouseup', function () {
-    //        $(document).off('mousemove');
-    //    });
-    //});
 });

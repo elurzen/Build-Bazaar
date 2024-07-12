@@ -1,5 +1,10 @@
+@font-face {
+    font-family: "BazaarFont";
+    src: url("../Media/BazaarFont.ttf");
+}
+
 body {
-    background-image: url('../Content/images/Exarch_Eater.png'); 
+    background-image: url('../Content/images/Exarch_Eater.png');
     background-color: black;
     background-size: cover;
     background-position: center;
@@ -8,7 +13,15 @@ body {
     justify-content: center;
     align-items: center;
     margin: 0;
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-top: 45px;
+    min-width: 1810px;
+}
+
+.body-content {
+    padding: 0;
+    /*min-width: 1500px;*/
 }
 
   *{
@@ -36,15 +49,94 @@ body {
     text-align: center; /* Center the text within its container */
   }
 
+.header {
+    width: 100vw;
+    min-width: 1810px;
+    display: flex;
+    background-color: #333;
+    padding-top: 10px;
+}
+
+.buildBazaarHeader {
+    width: 300px !important;
+    min-width: 250px !important;
+    text-align: left !important;
+    margin: 0 !important;
+    padding-left: 20px; /* Adjust the initial padding value */
+    padding-right: 10%; /* Adjust the initial padding value */
+}
+
+    .buildBazaarHeader img {
+        width: 45px !important;
+        margin-right: 10px;
+    }
+
+    .buildBazaarHeader p {
+        min-width: 210px !important;
+        padding-top: 10px;
+        margin-right: 10px;
+        font-family: BazaarFont;
+        /*font-size: xxx-large !important;*/
+        font-size: 3.25em !important;
+    }
+
+.logoutHeader {
+    width: 200px;
+    text-align: right !important;
+    margin: 0 !important;
+    padding-left: 10%;
+    padding-right: 20px;
+    /*font-size: x-large !important;*/
+    font-size: 1em;
+}
+.headerSection {
+    width: 200px;
+    min-width: 180px;
+    text-align: center;
+    margin: 0 auto;
+
+}
+
+    .headerSection a {
+        text-decoration: none;
+        color: white;
+        display: inline-flex; 
+        align-items: center;
+        height: 48px;
+
+    }
+
+    .headerSection img {
+        width: 30px;
+        margin-left: 5px;
+        margin-right: 10px;
+    }
+
+    .headerSection p {
+        margin-right: 10px;
+        font-family: BazaarFont;
+        /*font-size: xx-large;*/
+        font-size: 2em;
+    }
+
+.headerSeparator {
+    height: 47px;
+    width: 1px;
+    background-color: rgb(108, 108, 108);
+    margin:0;
+    padding-right: 1px;
+}
+
+
   form {
     display: flex;
     flex-direction: column;
     align-items: center;
   }
   
-  div {
+  /*div {
     margin: 10px;
-  }
+  }*/
   
   label, input {
     display: block;
@@ -88,6 +180,7 @@ body {
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
     width: 500px;
     height: 350px;
+    z-index:3;
   }
   
   .popup-content h2 {
@@ -130,63 +223,154 @@ body {
     color: white;
   }
 
-#sidebar {
+
+
+
+
+
+
+
+
+
+/*#sidebar {
     background-color: #333;
     color: #fff;
     opacity: 0.9;
     position: fixed;
-    top: 0;
+    top: 120px;
     left: 0;
     bottom: 0;
     width: 15vw;
     padding: 20px;
     box-sizing: border-box;
     overflow-y: auto;
-    overflow-wrap: break-word;
+    overflow-wrap: break-word;*/
+/*transition: width 0.3s;*/ /* Smooth transition */
+/*}
+
+
+
+#sidebar {
+    position: fixed;
+    top: 55px;*/ /* Adjust this to the height of your header */
+/*left: 0;
+    width: 250px;
+    height: calc(100% - 55px);*/ /* Adjust height to be full height minus header height */
+/*background-color: #f4f4f4;
+    overflow-x: hidden;
+    transition: width 0.3s;*/ /* Smooth transition */
+/*z-index: 900;*/ /* Ensure sidebar is below the header */
+/*}*/
+
+
+
+
+    /*#sidebar.collapsed {
+        width: 50px;*/ /* Adjust width when collapsed */
+    /*}
+
+        #sidebar.collapsed h2,
+        #sidebar.collapsed ul {
+            display: none;*/ /* Hide sidebar content when collapsed */
+        /*}*/
+
+/*#content {
+    margin-left: 260px;*/ /* Adjust content margin when sidebar is visible */
+/*transition: margin-left 0.3s;*/ /* Smooth transition */
+/*padding-top: 55px;*/ /* Ensure content starts below the header */
+/*}
+
+    #content.collapsed {
+        margin-left: 60px;*/ /* Adjust content margin when sidebar is collapsed */
+
+/*}*/
+
+
+
+#sidebar {
+    background-color: #333;
+    color: #fff;
+    opacity: 0.9;
+    position: fixed;
+    top: 55px; /* Adjust this to the height of your header */
+    left: 0;
+/*    width: 250px;*/
+    width: 14.5vw;
+    min-width: 200px;
+    height: calc(100% - 55px); /* Adjust height to be full height minus header height */
+    background-color: #f4f4f4;
+    overflow-x: hidden;
+    /*transition: width 0.3s;*/ /* Smooth transition  --- need to get columns transitioning before this, changing #content breaks header */
+    z-index: 2; /* Ensure sidebar is below the header */
 }
 
-#sidebar h2 {
-    margin-top: 0;
-    padding-top: 0;
-    font-size: 1.5em;
-    text-align: center;
-}
-
-#sidebar ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    border-top: 1px solid #ccc;
-}
-
-#sidebar li {
-    padding: 10px;
-    border-bottom: 1px solid #ccc;
-    overflow-wrap: anywhere;
-}
-
-#sidebar li:hover {
-    background-color: #555;
-}
-
-#signOutButton {
-    background-color: #f44336; /* Red background */
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 5px;
-    position: absolute;
-    bottom: 0;
-}
-
-    #signOutButton:hover {
-        background-color: #d32f2f; /* Darker red on hover */
+    #sidebar h2 {
+        margin-top: 0;
+        padding-top: 0;
+        font-size: 1.5em;
+        text-align: center;
     }
+
+    #sidebar ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        border-top: 1px solid #ccc;
+    }
+
+    #sidebar li {
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
+        overflow-wrap: anywhere;
+    }
+
+        #sidebar li:hover {
+            background-color: #555;
+        }
+
+        #sidebar li:hover img {
+            display:block;
+        }
+
+    #sidebar.collapsed {
+        width: 50px; /* Adjust width when collapsed */
+        min-width: 0px;
+    }
+
+        #sidebar.collapsed h2,
+        #sidebar.collapsed ul {
+            display: none; /* Hide sidebar content when collapsed */
+        }
+
+#sidebarToggle {
+    position: absolute;
+    top: 10px;
+    left: 10px; /* Adjust to position the hamburger menu icon */
+    background-color: #f4f4f4;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding: 5px;
+    cursor: pointer;
+    font-size: 20px; /* Adjust size of hamburger icon */
+}
+
+
+.sidebar-content {
+    padding: 10px; /* Add padding to sidebar content for better layout */
+}
+
+.selected-build {
+    background-color: #6c6c6c;
+}
+
+.column {
+    /* Ensure columns are not hidden when sidebar is collapsed */
+    display: block;
+}
+
+.hidden {
+    display: none;
+}
 
 img.thumbnail {
     width: 50px;
@@ -199,23 +383,75 @@ img.referenceImage {
     padding-bottom: 10px;
 }
 
+.image-wrapper {
+    position: relative;
+    display: inline-block;
+    z-index:2;
+}
+
+    .image-wrapper:hover .delete-button, 
+    .image-wrapper:hover .expand-button {
+        display: block;
+    }
+
+.delete-button, .expand-button {
+    display: none;
+    position: absolute;
+    top: 0;
+    background-size: contain;
+    background-color: black;
+    border-radius: 10px;
+    width: 30px; /* Adjust the width as needed */
+    height: 30px; /* Adjust the height as needed */
+    border: none;
+    cursor: pointer;
+}
+
+.expand-button {
+    right: 35px; 
+    background-image: url('../Media/expand_button.png');
+}
+
+.delete-button {
+    right: 0px;
+    background-image: url('../Media/delete_X_button2.png');
+}
+
+
 .build-item {
     display: flex;
     align-items: center;
-
 }
 
 #content {
+    margin-left: max(13.9vw, 200px);    
+    padding: 20px;
+    z-index: 1;
+    width: 84vw;
+    height: 100vh;
+    min-width: 1125px;
+    /*transition: margin-left 0.3s;*/ /* Smooth transition --- breaks header bar */
+}
+
+
+    #content.collapsed {
+        margin-left: 50px; /* Adjust content margin when sidebar is collapsed */
+        /*transition: margin-left 0.3s;*/
+        width: 95vw;
+    }
+
+#content-expanded {
     margin-left: 15vw;
     padding: 20px;
     z-index: 1;
-    width: 80vw;
+    width: 95vw;
     height: 100vh;
 }
 
 .row {
     display: flex;
     min-height: 90vh;
+    min-width: 1570px;
 }
 
 .column {
@@ -227,7 +463,14 @@ img.referenceImage {
     overflow-wrap: break-word;
     overflow: auto;
     max-height: 90vh;
+    margin: 10px;
+    /*transition: margin-left 0.3s;*/
 }
+
+
+    .column.collapsed {
+        width: calc((100% - 50px) / 3); /* Adjust width when sidebar is collapsed */
+    }
 /*
 .resizable {
     resize: horizontal;  /*Allow horizontal resizing* /
@@ -252,8 +495,25 @@ img.referenceImage {
 
 .column-header {
     display: flex;
-    justify-content:space-between;
-    align-items: center;
+    justify-content: space-between;
+    align-items: center; /* Center items vertically */
+    flex-wrap: wrap; /* Wrap items if they overflow */
+}
+
+.input-group {
+    /*margin-bottom: 5px;*/
+}
+
+.input-group label,
+.input-group input {
+    margin-bottom: 5px; /* Adjust spacing between label and input */
+}
+
+.button-group {
+    /*margin-top: 5px;*/ /* Adjust spacing between input groups and buttons */
+    display:flex;
+    margin-right:0;
+    margin-left:auto;
 }
 
 .column ul
@@ -263,4 +523,89 @@ img.referenceImage {
 
 .noscroll {
     overflow:hidden !important;
+}
+
+/* Modal container */
+.modal {
+    display: block; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 9000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* Enable scrolling if needed */
+    background-color: rgba(0, 0, 0, 0.5); /* Black w/ opacity */
+}
+
+/* Modal content */
+.modal-content {
+    position: absolute;
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Center both horizontally and vertically */
+    background-color: #fefefe;
+    padding: 20px;
+    border: 1px solid #888;
+    max-width: 90%;
+    max-height: 90vh;
+    overflow: auto;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Close button */
+.close-modal {
+    color: #aaa;
+    position: absolute;
+    top: 10px; /* Adjust top position */
+    right: 20px; /* Adjust right position */
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+    .close-modal:hover,
+    .close-modal:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+.editImage {
+    width: 25px;
+    height: 25px;
+    margin-right: 10px;
+    margin-left: auto;
+    display:none;
+}
+
+.form-group{
+    display:flex;
+    margin-top: 10px;
+    gap: 15px;
+    width: 84%;
+}
+
+.form-group label{
+    font-size: 20px;
+    align-content: center;
+}
+
+#popup-overlay {
+    display: none; /* Initially hidden */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    z-index: 2; /* Ensure it is above other content */
+}
+
+.hidden-children > * {
+    display: none;
 }

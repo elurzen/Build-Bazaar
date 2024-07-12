@@ -6,74 +6,170 @@
 <!DOCTYPE html>
 <head>
     <link rel="stylesheet" type="text/css" href="~/Content/BuildBazaar.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="icon" href="~/Media/bazaar-logo.png" />
+    @*<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>*@
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryui")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/modernizr")
+
+    @Scripts.Render("~/Content/css")
     <script src="~/Scripts/buildbazaar-builds.js"></script>
     @*<script src="https://www.pathofexile.com/passive-skill-tree"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/canvasjs/1.7.0/canvasjs.min.js"></script>*@
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/canvasjs/1.7.0/canvasjs.min.js"></script>*@
 </head>
 <body>
 
+    <div class="header">
+        <div class="buildBazaarHeader headerSection">
+            <a>
+                <img src="../Media/bazaar-logo.png">
+                <p>Build Bazaar</p>
+            </a>
+        </div>
+        <div class="headerSeparator"></div>
+        <div class="headerSection" style="margin: 0 auto; cursor: pointer;" onclick="window.open('https://poe.ninja/', '_blank');">
+            <a @*href="https://poe.ninja/" target="_blank"*@>
+                <img src="../Media/ninja-logo.png">
+                <p>PoE Ninja</p>
+            </a>
+        </div>
+        <div class="headerSeparator"></div>
+        <div class="headerSection" style="margin: 0 auto; cursor: pointer;" onclick="window.open('https://www.craftofexile.com/', '_blank');">
+            <a @*href="https://www.craftofexile.com/" target="_blank"*@>
+                <img src="../Media/coe-logo.ico">
+                <p>Craft of Exile</p>
+            </a>
+        </div>
+        <div class="headerSeparator"></div>
+        <div class="headerSection" style="margin: 0 auto; cursor: pointer;" onclick="window.open('https://poedb.tw/', '_blank');">
+            <a @*href="https://poedb.tw" target="_blank"*@>
+                <img src="../Media/poedb-logo.png">
+                <p>PoE DB</p>
+            </a>
+        </div>
+        <div class="headerSeparator"></div>
+        <div class="headerSection" style="margin: 0 auto; cursor: pointer;" onclick="window.open('https://www.poelab.com/', '_blank');">
+            <a @*href="https://www.poelab.com/" target="_blank"*@>
+                <img src="../Media/poelab-logo.png">
+                <p>PoE Lab</p>
+            </a>
+        </div>
+        <div class="headerSeparator"></div>
+        <div class="headerSection" style="margin: 0 auto; cursor: pointer;" onclick="window.open('https://www.pathofexile.com/trade/', '_blank');">
+            <a @*href="https://www.pathofexile.com/trade/" target="_blank"*@>
+                <img src="../Media/poe-logo.ico">
+                <p>Trade</p>
+            </a>
+        </div>
+        <div class="headerSeparator"></div>
+        <div class="logoutHeader headerSection">
+            <a style="margin: 0 auto; cursor: pointer;" onclick="logout()">
+                <img src="../Media/logout.png" alt="Sign Out Icon">
+                <p>Log Out</p>
+            </a>
+        </div>
+    </div>
+
     <div id="sidebar">
-        <h2>Builds</h2>
-        <ul id="sidebarBuildList" style="list-style-type: none;"></ul>
-        <button id="signOutButton" onclick="signOut()">Sign Out</button>
+        <div id="sidebarToggle">&#9776;</div>
+        <div class="sidebar-content">
+            <h2>Builds</h2>
+            <ul id="sidebarBuildList" style="list-style-type: none;"></ul>
+        </div>
     </div>
 
 
     <div id="content">
         <div class="overlay"></div>
-        <div class="row">
+        <div id="main-row" class="row">
             <div class="column resizable" id="notesColumn">
                 <div id="build-info">
                     <div id="build-info-header" class="column-header">
-                        <h2>Build Info</h2>
-                        <button id="notes-edit-button">Edit</button>
-                        <button id="notes-save-button" style="display: none;">Save</button>
-                        <button id="notes-cancel-button" style="display: none;">Cancel</button>
+                        <div class="button-group">
+                            <button id="notes-edit-button">Edit</button>
+                            <button id="notes-save-button" style="display: none;">Save</button>
+                            <button id="notes-cancel-button" style="display: none;">Cancel</button>
+                        </div>
                     </div>
                     <p id="notes">Here's some text with <a href="#">a clickable link</a>.</p>
                 </div>
             </div>
             <div class="column noscroll resizable" id="iFrameColumn">
                 <div id="poeplanner-header" class="column-header">
-                    <select id="urlSelect"></select>
-                    <label id="lbl-url-name" class="hidden">Name: </label>
-                    <input id="txt-url-name" class="hidden" type="text" readonly>
-                    <label id="lbl-url-url" class="hidden">URL: </label>
-                    <input id="txt-url-url" class="hidden" type="text" readonly>
-                    <button id="url-edit-button">Edit</button>
-                    <button id="url-save-button" class="hidden">Save</button>
-                    <button id="url-delete-button" class="hidden">Delete</button>
-                    <button id="url-cancel-button" class="hidden">Cancel</button>
-                    <button id="url-load-button">Load</button>
+                    <div class="input-group">
+                        <select id="urlSelect"></select>
+                        <label id="lbl-url-name" class="hidden">Name: </label>
+                        <input id="txt-url-name" class="hidden" type="text" readonly>
+                        
+                    </div>
+                    <div class="input-group">
+                        <label id="lbl-url-url" class="hidden">URL: </label>
+                        <input id="txt-url-url" class="hidden" type="text" readonly>                        
+                    </div>
+                    <div class="button-group"> 
+                        <button id="url-edit-button">Edit</button>
+                        <button id="url-load-button">Load</button>
+                        <button id="url-save-button" class="hidden">Save</button>
+                        <button id="url-delete-button" class="hidden">Delete</button>
+                        <button id="url-cancel-button" class="hidden">Cancel</button>
+                    </div>
                 </div>
                 <iframe id="tree" src="https://poeplanner.com/" style="width:100%; height: 95%;"></iframe>
             </div>
             <div class="column resizable" id="imagesColumn">
-                <div id="referenceImages">
-                    <button id="upload-image-button" onclick="showUploadReferenceImageForm()">Upload Image</button>
-                    <ul id="referenceImageList" style="list-style-type: none;"></ul>
+                <div id="referenceImages">    
+                    <button id="upload-image-button" class="button-group" onclick="showUploadReferenceImageForm()">Upload Image</button>
+                    <ul id="referenceImageList" class="sortable-list" style="list-style-type: none;"></ul>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="overlay"></div>
+    <div id="popup-overlay"></div>
 
     <div id="addBuildForm">
         <div id="add-build-form" class="popup">
             <div class="popup-content">
                 <h2>Create new build</h2>
                 <form id="new-build-form" method="post">
-                    <label for="build-name">Build name:</label>
-                    <input type="text" id="build-name" name="build-name" required>
-
-                    <label for="build-image">Build image:</label>
-                    <input type="file" id="build-image" name="build-image" accept="image/*" required>
-
+                    <div class="form-group">
+                        <label for="build-name">Build name:</label>
+                        <input type="text" id="build-name" name="build-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="build-image">Build image:</label>
+                        <input type="file" id="build-image" name="build-image" accept="image/*" required>
+                    </div>
                     <div class="buttons">
                         <button type="button" onclick="hideAddBuildForm()">Cancel</button>
                         <button type="submit" id="create-build-button">Create</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="editBuildForm">
+        <div id="edit-build-form" class="popup">
+            <div class="popup-content">
+                <h2>Edit Build</h2>
+                <form id="edit-build-form" method="post">
+                    <input type="hidden" id="edit-build-id" name="build-id">
+                    <img id="edit-build-img" class="thumbnail" />
+                    <div class="form-group">
+                        <label for="build-name">Build name:</label>
+                        <input type="text" id="edit-build-name" name="build-name">
+                    </div>
+                    <div class="form-group">
+                        <label for="build-image">Build image:</label>
+                        <input type="file" id="edit-build-image" name="build-image" accept="image/*">
+                    </div>
+                    <div class="buttons">
+                        <button type="button" onclick="hideEditBuildForm()">Cancel</button>
+                        <button type="button" id="delete-build-button">Delete</button>
+                        <button type="submit" id="edit-build-button">Update</button>
                     </div>
                 </form>
             </div>

@@ -1,0 +1,173 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Tech\\Build Bazaar\\Server\\BuildBazaar\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{4DC03270-D18C-42F3-A04B-1F828E808E65}|BuildBazaar\\BuildBazaar.csproj|d:\\tech\\build bazaar\\server\\buildbazaar\\buildbazaar\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4DC03270-D18C-42F3-A04B-1F828E808E65}|BuildBazaar\\BuildBazaar.csproj|solutionrelative:buildbazaar\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4DC03270-D18C-42F3-A04B-1F828E808E65}|BuildBazaar\\BuildBazaar.csproj|D:\\Tech\\Build Bazaar\\Server\\BuildBazaar\\buildbazaar\\views\\home\\builds.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{4DC03270-D18C-42F3-A04B-1F828E808E65}|BuildBazaar\\BuildBazaar.csproj|solutionrelative:buildbazaar\\views\\home\\builds.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4DC03270-D18C-42F3-A04B-1F828E808E65}|BuildBazaar\\BuildBazaar.csproj|D:\\Tech\\Build Bazaar\\Server\\BuildBazaar\\buildbazaar\\content\\buildbazaar.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{4DC03270-D18C-42F3-A04B-1F828E808E65}|BuildBazaar\\BuildBazaar.csproj|solutionrelative:buildbazaar\\content\\buildbazaar.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4DC03270-D18C-42F3-A04B-1F828E808E65}|BuildBazaar\\BuildBazaar.csproj|D:\\Tech\\Build Bazaar\\Server\\BuildBazaar\\buildbazaar\\scripts\\buildbazaar-builds.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{4DC03270-D18C-42F3-A04B-1F828E808E65}|BuildBazaar\\BuildBazaar.csproj|solutionrelative:buildbazaar\\scripts\\buildbazaar-builds.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4DC03270-D18C-42F3-A04B-1F828E808E65}|BuildBazaar\\BuildBazaar.csproj|d:\\tech\\build bazaar\\server\\buildbazaar\\buildbazaar\\models\\imageorder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4DC03270-D18C-42F3-A04B-1F828E808E65}|BuildBazaar\\BuildBazaar.csproj|solutionrelative:buildbazaar\\models\\imageorder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4DC03270-D18C-42F3-A04B-1F828E808E65}|BuildBazaar\\BuildBazaar.csproj|D:\\Tech\\Build Bazaar\\Server\\BuildBazaar\\buildbazaar\\scripts\\buildbazaar-index.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{4DC03270-D18C-42F3-A04B-1F828E808E65}|BuildBazaar\\BuildBazaar.csproj|solutionrelative:buildbazaar\\scripts\\buildbazaar-index.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4DC03270-D18C-42F3-A04B-1F828E808E65}|BuildBazaar\\BuildBazaar.csproj|d:\\tech\\build bazaar\\server\\buildbazaar\\buildbazaar\\models\\imagemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4DC03270-D18C-42F3-A04B-1F828E808E65}|BuildBazaar\\BuildBazaar.csproj|solutionrelative:buildbazaar\\models\\imagemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4DC03270-D18C-42F3-A04B-1F828E808E65}|BuildBazaar\\BuildBazaar.csproj|D:\\Tech\\Build Bazaar\\Server\\BuildBazaar\\buildbazaar\\models\\buildmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4DC03270-D18C-42F3-A04B-1F828E808E65}|BuildBazaar\\BuildBazaar.csproj|solutionrelative:buildbazaar\\models\\buildmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4DC03270-D18C-42F3-A04B-1F828E808E65}|BuildBazaar\\BuildBazaar.csproj|D:\\Tech\\Build Bazaar\\Server\\BuildBazaar\\buildbazaar\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{4DC03270-D18C-42F3-A04B-1F828E808E65}|BuildBazaar\\BuildBazaar.csproj|solutionrelative:buildbazaar\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 5,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ImageOrder.cs",
+              "DocumentMoniker": "D:\\Tech\\Build Bazaar\\Server\\BuildBazaar\\BuildBazaar\\Models\\ImageOrder.cs",
+              "RelativeDocumentMoniker": "BuildBazaar\\Models\\ImageOrder.cs",
+              "ToolTip": "D:\\Tech\\Build Bazaar\\Server\\BuildBazaar\\BuildBazaar\\Models\\ImageOrder.cs",
+              "RelativeToolTip": "BuildBazaar\\Models\\ImageOrder.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAAAdAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-11T20:38:45.621Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "ImageModel.cs",
+              "DocumentMoniker": "D:\\Tech\\Build Bazaar\\Server\\BuildBazaar\\BuildBazaar\\Models\\ImageModel.cs",
+              "RelativeDocumentMoniker": "BuildBazaar\\Models\\ImageModel.cs",
+              "ToolTip": "D:\\Tech\\Build Bazaar\\Server\\BuildBazaar\\BuildBazaar\\Models\\ImageModel.cs",
+              "RelativeToolTip": "BuildBazaar\\Models\\ImageModel.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAAdAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-11T19:07:07.579Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "buildbazaar-index.js",
+              "DocumentMoniker": "D:\\Tech\\Build Bazaar\\Server\\BuildBazaar\\BuildBazaar\\Scripts\\buildbazaar-index.js",
+              "RelativeDocumentMoniker": "BuildBazaar\\Scripts\\buildbazaar-index.js",
+              "ToolTip": "D:\\Tech\\Build Bazaar\\Server\\BuildBazaar\\BuildBazaar\\Scripts\\buildbazaar-index.js",
+              "RelativeToolTip": "BuildBazaar\\Scripts\\buildbazaar-index.js",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAEAAAAEAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2024-06-27T20:12:49.36Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "BuildModel.cs",
+              "DocumentMoniker": "D:\\Tech\\Build Bazaar\\Server\\BuildBazaar\\BuildBazaar\\Models\\BuildModel.cs",
+              "RelativeDocumentMoniker": "BuildBazaar\\Models\\BuildModel.cs",
+              "ToolTip": "D:\\Tech\\Build Bazaar\\Server\\BuildBazaar\\BuildBazaar\\Models\\BuildModel.cs",
+              "RelativeToolTip": "BuildBazaar\\Models\\BuildModel.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA4AAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-20T19:24:19.632Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "D:\\Tech\\Build Bazaar\\Server\\BuildBazaar\\BuildBazaar\\Views\\Home\\index.cshtml",
+              "RelativeDocumentMoniker": "BuildBazaar\\Views\\Home\\index.cshtml",
+              "ToolTip": "D:\\Tech\\Build Bazaar\\Server\\BuildBazaar\\BuildBazaar\\Views\\Home\\index.cshtml",
+              "RelativeToolTip": "BuildBazaar\\Views\\Home\\index.cshtml",
+              "ViewState": "AQIAABIAAAAAAAAAAAAAAB8AAAAkAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-06-19T18:20:09.943Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "HomeController.cs",
+              "DocumentMoniker": "D:\\Tech\\Build Bazaar\\Server\\BuildBazaar\\BuildBazaar\\Controllers\\HomeController.cs",
+              "RelativeDocumentMoniker": "BuildBazaar\\Controllers\\HomeController.cs",
+              "ToolTip": "D:\\Tech\\Build Bazaar\\Server\\BuildBazaar\\BuildBazaar\\Controllers\\HomeController.cs",
+              "RelativeToolTip": "BuildBazaar\\Controllers\\HomeController.cs",
+              "ViewState": "AQIAAB4AAAAAAAAAAAAEwBwAAAAJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-19T18:07:36.191Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "BuildBazaar.css",
+              "DocumentMoniker": "D:\\Tech\\Build Bazaar\\Server\\BuildBazaar\\BuildBazaar\\Content\\BuildBazaar.css",
+              "RelativeDocumentMoniker": "BuildBazaar\\Content\\BuildBazaar.css",
+              "ToolTip": "D:\\Tech\\Build Bazaar\\Server\\BuildBazaar\\BuildBazaar\\Content\\BuildBazaar.css",
+              "RelativeToolTip": "BuildBazaar\\Content\\BuildBazaar.css",
+              "ViewState": "AQIAAOIBAAAAAAAAAAAAAOIBAAASAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2024-06-17T16:12:31.472Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Builds.cshtml",
+              "DocumentMoniker": "D:\\Tech\\Build Bazaar\\Server\\BuildBazaar\\BuildBazaar\\Views\\Home\\Builds.cshtml",
+              "RelativeDocumentMoniker": "BuildBazaar\\Views\\Home\\Builds.cshtml",
+              "ToolTip": "D:\\Tech\\Build Bazaar\\Server\\BuildBazaar\\BuildBazaar\\Views\\Home\\Builds.cshtml",
+              "RelativeToolTip": "BuildBazaar\\Views\\Home\\Builds.cshtml",
+              "ViewState": "AQIAAEwAAAAAAAAAAAAAAHoAAABJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-06-17T15:40:27.481Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "buildbazaar-builds.js",
+              "DocumentMoniker": "D:\\Tech\\Build Bazaar\\Server\\BuildBazaar\\BuildBazaar\\Scripts\\buildbazaar-builds.js",
+              "RelativeDocumentMoniker": "BuildBazaar\\Scripts\\buildbazaar-builds.js",
+              "ToolTip": "D:\\Tech\\Build Bazaar\\Server\\BuildBazaar\\BuildBazaar\\Scripts\\buildbazaar-builds.js",
+              "RelativeToolTip": "BuildBazaar\\Scripts\\buildbazaar-builds.js",
+              "ViewState": "AQIAAP0CAAAAAAAAAAAvwBMDAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2024-06-17T15:39:48.799Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

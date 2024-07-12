@@ -1,0 +1,350 @@
+body {
+    background-image: url('../Content/images/Exarch_Eater.png'); 
+    background-color: black;
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    overflow: hidden;
+}
+
+  *{
+    z-index: 1;
+  }
+  .overlay {
+    position: absolute;
+    display:none;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 0;
+  }
+
+  .titleText {
+    
+    font-size: 4rem; /* Change the font size as needed */
+    color: #fff; /* Set the color to white */
+    position: absolute; /* Position the text absolutely */
+    top: 7%; /* Set the distance from the top of the page */
+    left: 50%; /* Set the indentation from the left side of the page to the center */
+    transform: translateX(-50%); /* Center the text horizontally */
+    text-align: center; /* Center the text within its container */
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  div {
+    margin: 10px;
+  }
+  
+  label, input {
+    display: block;
+  }
+  
+  input[type="text"], input[type="password"] {
+    width: 200px;
+  }
+    
+  .button-container {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  button {
+    margin: 10px;
+  }
+
+  #signup-form {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+
+  .popup{
+      display:none;
+  }
+  
+  .popup-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgb(80, 80, 80);
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    width: 500px;
+    height: 350px;
+  }
+  
+  .popup-content h2 {
+    margin-top: 0;
+  }
+  
+  .popup-content label {
+    display: block;
+    margin-bottom: 10px;
+  }
+  
+  .popup-content input {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    margin-bottom: 20px;
+  }
+  
+  .buttons {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .buttons button {
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .buttons button:nth-child(1) {
+    background-color: #ccc;
+    color: white;
+  }
+  
+  .buttons button:nth-child(2) {
+    background-color: #5c050c;
+    color: white;
+  }
+
+#sidebar {
+    background-color: #333;
+    color: #fff;
+    opacity: 0.9;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 15vw;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    overflow-wrap: break-word;
+}
+
+#sidebar h2 {
+    margin-top: 0;
+    padding-top: 0;
+    font-size: 1.5em;
+    text-align: center;
+}
+
+#sidebar ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid #ccc;
+}
+
+#sidebar li {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    overflow-wrap: anywhere;
+}
+
+#sidebar li:hover {
+    background-color: #555;
+}
+
+#signOutButton {
+    background-color: #f44336; /* Red background */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    position: absolute;
+    bottom: 0;
+}
+
+#signOutButton:hover {
+    background-color: #d32f2f; /* Darker red on hover */
+}
+
+img.thumbnail {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+}
+
+img.referenceImage {
+    width: 100%;
+    padding-bottom: 10px;
+}
+
+.image-wrapper {
+    position: relative;
+    display: inline-block;
+    z-index:2;
+}
+
+    .image-wrapper:hover .delete-button, 
+    .image-wrapper:hover .expand-button {
+        display: block;
+    }
+
+.delete-button, .expand-button {
+    display: none;
+    position: absolute;
+    top: 0;
+    background-size: contain;
+    background-color: black;
+    border-radius: 10px;
+    width: 30px; /* Adjust the width as needed */
+    height: 30px; /* Adjust the height as needed */
+    border: none;
+    cursor: pointer;
+}
+
+.expand-button {
+    right: 35px; 
+    background-image: url('../Media/expand_button.png');
+}
+
+.delete-button {
+    right: 0px;
+    background-image: url('../Media/delete_X_button2.png');
+}
+
+
+.build-item {
+    display: flex;
+    align-items: center;
+}
+
+#content {
+    margin-left: 15vw;
+    padding: 20px;
+    z-index: 1;
+    width: 80vw;
+    height: 100vh;
+}
+
+.row {
+    display: flex;
+    min-height: 90vh;
+}
+
+.column {
+    width: 33.33%;
+    padding: 10px;
+    background-color: #333;
+    color: #fff;
+    opacity: 0.8;
+    overflow-wrap: break-word;
+    overflow: auto;
+    max-height: 90vh;
+}
+/*
+.resizable {
+    resize: horizontal;  /*Allow horizontal resizing* /
+    overflow: auto; /*Enable overflow behavior* /
+}
+
+*/
+.column-expanded {
+    width: 33.33%;
+    padding: 10px;
+    background-color: #333;
+    color: #fff;
+    opacity: 0.8;
+    overflow-wrap: break-word;
+    overflow: auto;
+    max-height: 90vh;
+}
+
+.hidden {
+    display: none;
+}
+
+.column-header {
+    display: flex;
+    justify-content:space-between;
+    align-items: center;
+}
+
+.column ul
+{
+    padding-left: 0;
+}
+
+.noscroll {
+    overflow:hidden !important;
+}
+
+/* Modal container */
+.modal {
+    display: block; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 9000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* Enable scrolling if needed */
+    background-color: rgba(0, 0, 0, 0.5); /* Black w/ opacity */
+}
+
+/* Modal content */
+.modal-content {
+    position: absolute;
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Center both horizontally and vertically */
+    background-color: #fefefe;
+    padding: 20px;
+    border: 1px solid #888;
+    max-width: 90%;
+    max-height: 90vh;
+    overflow: auto;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Close button */
+.close-modal {
+    color: #aaa;
+    position: absolute;
+    top: 10px; /* Adjust top position */
+    right: 20px; /* Adjust right position */
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+    .close-modal:hover,
+    .close-modal:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }

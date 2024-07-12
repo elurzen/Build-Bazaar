@@ -1,4 +1,5 @@
 function showSignupForm() {
+    $("#new-user-form")[0].reset();    
 	document.getElementById("signup-form").style.display = "block";
 }
 

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<head>
+    <link rel="stylesheet" type="text/css" href="~/Content/BuildBazaar.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/jquery-ui.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/Scripts/jquery-ui/jquery-ui.min.js"></script>
+    <script src="~/Scripts/buildbazaar-index.js"></script>
+</head>
+<body>
+    <div class="overlay"></div>
+    <div class="titleText">Build Bazaar</div>
+    <form id="login-form" method="post">
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+
+        <div class="button-container" >
+            <button id="signup-button" onclick="showSignupForm()">Sign up</button>
+            <button id="login-button" type="submit" name="submit">Log In</button>
+        </div>
+    </form>
+
+    <div id="signup-form">
+        <div class="popup-content">
+            <h2>Sign up</h2>
+            <form id="new-user-form" method="post">
+                <label for="email">Email:</label>
+                <input type="email" id="new-email" name="email" required>
+
+                <label for="new-username">Username:</label>
+                <input type="text" id="new-username" name="username" required>
+
+                <label for="new-password">Password:</label>
+                <input type="password" id="new-password" name="password" required>
+
+                <div class="buttons">
+                    <button type="button" onclick="hideSignupForm()">Cancel</button>
+                    <button type="submit" id="signup-submit">Sign up</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>

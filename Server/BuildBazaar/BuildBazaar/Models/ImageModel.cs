@@ -7,7 +7,12 @@ namespace BuildBazaar.Models
         [Key]
         public uint imageID { get; set; }
         public uint buildID { get; set; }
+        public uint typeID { get; set; }
+        public uint userID { get; set; }
         public string filePath { get; set; }
+        public int imageOrder { get; set; }
+
+        
 
     }
 }
